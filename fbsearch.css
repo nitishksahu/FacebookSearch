@@ -1,0 +1,111 @@
+
+.form-group{
+    background: lightgrey;
+    margin-top: 0px;
+}
+
+.active{
+    background: #3b5998;
+       color:#3b5998;
+}
+
+#seacrhDiv{
+    background: #3b5998;
+}
+
+.blue{
+    background:  #3b5998;
+}
+
+.nav>li>a:focus, .nav>li>a:hover{
+    background-color:  #3b5998;
+    color:white;
+}
+
+
+.animate-slide {
+/*   background:red; */
+  position:absolute;
+  
+}
+
+a.active{
+        color: white;
+}
+
+
+.animate-slide.ng-hide.right {
+  display:block!important;
+  animation:0.5s slide-right;
+    width: 100%; height:100%;
+}
+
+.animate-slide.left.ng-hide {
+  display:block!important;
+  animation:0.5s slide-left;
+    width: 100%; height:100%;
+}
+
+/* Standard syntax */
+@keyframes slide-right
+{
+ 0% {left:-100%;}
+100% {left:0%;}
+}
+
+@keyframes slide-left
+{
+ 0% {right:-100%;}
+100% {right:0%;}
+}
+
+#srch-term{
+    height: 3.2em;
+}
+.progress-bar-striped, .progress-striped .progress-bar{
+    background-image: -webkit-linear-gradient(45deg,rgba(255,255,255,.15) 25%,transparent 25%,transparent 50%,rgba(255,255,255,.15) 50%,rgba(255,255,255,.15) 75%,transparent 75%,transparent);
+    -webkit-animation:progress-bar-stripes 2s linear infinite;
+    -o-animation: progress-bar-stripes 2s linear infinite;
+    background-image: -webkit-linear-gradient(45deg,rgba(255,255,255,.15) 25%,transparent 25%,transparent 50%,rgba(255,255,255,.15) 50%,rgba(255,255,255,.15) 75%,transparent 75%,transparent);
+-webkit-animation: progress-bar-stripes 2s linear infinite;
+-o-animation: progress-bar-stripes 2s linear infinite;
+    background-image: -webkit-linear-gradient(45deg,rgba(255,255,255,.15) 25%,transparent 25%,transparent 50%,rgba(255,255,255,.15) 50%,rgba(255,255,255,.15) 75%,transparent 75%,transparent);
+background-image: -o-linear-gradient(45deg,rgba(255,255,255,.15) 25%,transparent 25%,transparent 50%,rgba(255,255,255,.15) 50%,rgba(255,255,255,.15) 75%,transparent 75%,transparent);
+background-image: linear-gradient(45deg,rgba(255,255,255,.15) 25%,transparent 25%,transparent 50%,rgba(255,255,255,.15) 50%,rgba(255,255,255,.15) 75%,transparent 75%,transparent);
+-webkit-background-size: 40px 40px;
+background-size: 40px 40px;
+}
+#dataTable{
+       margin-top: 5.5em; 
+    }
+@media screen 
+  and (min-device-width: 1200px) 
+  and (max-device-width: 1600px) 
+  and (-webkit-min-device-pixel-ratio: 1) {
+
+    #dataTable{
+       margin-top: 8em; 
+    }
+}
+
+@media screen and (max-width: 640px) {
+    #dataTable{
+       margin-top: 26em; 
+    }
+    #showAlbums{
+       margin-top: 26em;   
+    }
+    .table-responsive{
+        width: 100%;
+    }
+    .glyphicon{
+        margin-left: -0.5em;
+    }
+}
+
+
+
+
+
+
+    

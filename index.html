@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+<title>FaceBook Search</title>
+
+
+<!-- jQuery -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.js" ></script>
+<!-- Angular JS -->    
+<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.6/angular.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.6/angular-animate.js"></script>
+<!-- JS file -->
+
+<!-- Latest compiled and minified CSS -->
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    
+
+     <link rel="stylesheet" href="fbsearch.css">
+
+<!-- FB SDK -->
+<script src="http://connect.facebook.net/en_US/sdk.js"></script>
+    
+<!--moment.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.18.1/moment.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+<!-- Optional theme -->
+<!--<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">-->
+
+<!-- Latest compiled and minified JavaScript -->
+<!--<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>-->
+    
+<!-- Font Awesome -->
+<link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
+    <script src="fbsearch.js" ></script>  
+   
+    
+</head>
+
+<body ng-app="fbApp" ng-controller="fbCtrl" >
+    
+<!--
+    <div class="progress" >
+  <div class="progress-bar progress-bar-striped active" role="progressbar"
+  aria-valuenow="40" aria-valuemin="0" aria-valuemax="100" style="width:40%">
+  </div>
+</div>
+-->
+    <div >
+    <div id="firstPage" ng-show=page1 >
+    
+    <div class="col-xs-12 col-md-12 col-lg-12 " style="background:lightgrey;">
+    <form class="form-inline">
+    <span class="col-xs-1 col-md-1 col-lg-1"></span> 
+    <label class="col-xs-12 col-md-3 col-lg-3" style="color:#3b5998;font-family: sans-serif;font-size: 2.5em;font-weight: lighter;">FB Search</label>
+    
+    <input type="text" required oninvalid="this.setCustomValidity('Please enter a value')" oninput="setCustomValidity('')" class=" col-xs-6 col-md-3 col-lg-3"  name="srch-term" value="" ng-model="query" id="srch-term">
+            
+    <button class="btn btn-default blue col-xs-2 col-md-1 col-lg-1" style= "background:#3b5998;color:white;height: 3.2em;" type="submit" ng-click="loadData(query,type)"><i class="glyphicon glyphicon-search"></i></button>
+    <span class="col-xs-2 col-md-1 col-lg-1"></span>      
+    <button type="reset" ng-click="clear()" class="btn btn-default col-xs-2 col-md-2 col-lg-1" style="background:white; color:#3b5998">Clear</button>
+    <div class="col-xs-1 col-md-hidden col-lg-hidden" style="background:lightgrey;"></div>
+    </div>
+    </form>
+        
+    <!-- Navigation Bar -->
+    <div id="navBar" > 
+    <nav class="col-xs-12 col-md-12 col-lg-12 center-block" style=" border-bottom: #3b5998;border-bottom-style: solid;border-bottom-width: 0.2em;">
+    <ul class="nav  nav-justified">
+     <li id="user" ng-class ="{active: isActive('user')}" class=" col-xs-12 col-md-2 col-lg-2 "><a href="" ng-Click="loadData(query,'user')">Users</a></li>
+     <li id="page" ng-class ="{active: isActive('page')}" class=" col-xs-12 col-md-2 col-lg-2"><a href="" ng-Click="loadData(query,'page')">Pages</a></li>
+     <li id="event" ng-class ="{active: isActive('event')}"  class=" col-xs-12 col-md-2 col-lg-2"><a href="" ng-Click="loadData(query,'event')">Events</a></li>
+     <li id="place" ng-class ="{active: isActive('place')}" class=" col-xs-12 col-md-2 col-lg-2"><a href="" ng-Click="loadData(query,'place')">Places</a></li>
+     <li id="group"ng-class ="{active: isActive('group')}"  class=" col-xs-12 col-md-2 col-lg-2"><a href="" ng-Click="loadData(query,'group')">Groups</a></li>
+     <li id="fab" ng-class ="{active: isActive('favourites')}"  class=" col-xs-12 col-md-2 col-lg-2"><a href="" ng-Click="loadFavData(query,'favourites')">Favourites</a></li>
+    </ul>
+    </nav>
+        
+        
+    </div>
+     
+    <div class="" style="padding-top:20em;" class="animate-slide left" ng-show=loading>
+        <div class="progress col-xs-1 col-md-12 col-lg-12"  >
+            <div class="progress-bar progress-bar-striped active" role="progressbar"  aria-valuemin="0" aria-valuemax="100" style="width: 50%">
+            </div>
+        </div>
+    </div>
+    </div>
+   
+     <!-- Table with data -->
+    <div  id="dataTable" style=" width:100%;"class="animate-slide left" ng-hide=tableSlide>    
+    <div id="tableData"  ng-show=tableData>
+    <table class="table  col-md-12 col-lg-12 ">
+    <tr>
+        <th ng-hide=favData class=" col-xs-1 col-md-1 col-lg-1"></th>
+        <th class="  col-md-2 col-lg-2">#</th>
+        <th class="  col-md-2 col-lg-2">Profile Photo</th>
+        <th class="  col-md-2 col-lg-2">Name</th>
+        <th class="  col-md-2 col-lg-2">Favourites</th>
+        <th class="  col-md-2 col-lg-2">Details</th>
+    </tr>
+   
+    
+        
+    <tr ng-repeat ="mydata in detailsData">
+        <th ng-hide=favData class=" col-xs-1 col-md-1 col-lg-1"></th>
+        <!--     <td>{{mydata}}</td>-->
+        <td class=" col-xs-1 col-md-1 col-lg-1">{{ $index+1}}</td>
+        <td class=" col-xs-1 col-md-1 col-lg-1"><a href="" ><img class="img-circle" height="40em" width="40em" ng-src="{{mydata.picture.data.url}}"></a></td>
+        <td class=" col-xs-1 col-md-1 col-lg-1">{{mydata.name}}</td>
+        <td ng-show=mydata.bookMarked><button  id="bookMarkButton" ng-click="removeFromBookMark(mydata);mydata.bookMarked=false" style="color:yellow;" class="btn col-xs-3 col-md-3 col-lg-3 " type="button"> <span class="glyphicon glyphicon-star"></span> </button></td>
+        
+        <td ng-hide=mydata.bookMarked><button  id="notBookMarkButton" ng-click="saveToBookMark(mydata); mydata.bookMarked=true"  class="btn col-xs-1 col-md-3 col-lg-3 " type="button"> <span style="color:grey;" class="glyphicon glyphicon-star-empty"></span> </button></td>
+        
+        <td ng-show=favData class=" col-xs-1 col-md-1 col-lg-1">{{mydata.type}}</td>
+                
+        <td class=" col-xs-1 col-md-1 col-lg-1"><a href="" ng-click="loadDetails(mydata.id,mydata.picture.data.url,mydata.name)"><button style="background: white;border: black;border-style: solid; " class="btn col-xs-3 col-md-3 col-lg-3" type="button"><span style="color: grey;" class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span></button></a></td>
+        <td></td>
+    </tr>   
+    </table> 
+    <ul class="pager" class=" col-xs-1 col-md-1 col-lg-1">
+      <li><a ng-show="pagingData.previous" href="" ng-click="prevPage(pagingData.previous)"> Previous</a></li>
+      <li><a ng-show="pagingData.next" href="" ng-click="nextPage(pagingData.next)">Next</a></li>
+    </ul>
+    </div>
+    
+    
+    <!-- Favourites Tab -->
+    
+    <div id="favTableData"  class="" ng-show=favDataShow>
+    <table class="table col-md-12 col-lg-12 ">
+    <tr>
+        
+        <th class=" col-xs-1 col-md-2 col-lg-2">#</th>
+        <th class=" col-xs-1 col-md-2 col-lg-2">Profile Photo</th>
+        <th class=" col-xs-9 col-md-2 col-lg-2">Name</th>
+        <th  class=" col-xs-1 col-md-2 col-lg-2">Type</th>
+        <th class=" col-xs-1 col-md-2 col-lg-2">Favourites</th>
+        <th class=" col-xs-1 col-md-2 col-lg-2">Details</th>
+    </tr>
+   
+    <tr  ng-repeat ="mydata in favouritesData">
+       
+<!--             <td>{{mydata}}</td>-->
+        <td class=" col-xs-2 col-md-2 col-lg-2">{{ $index+1}}</td>
+        <td class=" col-xs-4 col-md-2 col-lg-2"><a href="{{mydata.picture.data.url}}" ><img class="img-circle" height="40em" width="40em" ng-src="{{mydata.picture.data.url}}"></a></td>
+        <td class=" col-xs-6 col-md-2 col-lg-2">{{mydata.name}}</td>
+        <td class=" col-xs-1 col-md-2 col-lg-2">{{mydata.type}}</td>
+      
+         <td class=" col-xs-2 col-md-2 col-lg-2"><button  id="bookMarkButton" ng-click="removeFromBookMark(mydata)" style="background: white;border: grey;border-style: solid;" class="btn col-xs-2 col-md-3 col-lg-3 " type="button"> <span class="glyphicon glyphicon-trash" style="horizontal-align:middle"></span> </button></td>
+                  
+        <td class=" col-xs-2 col-md-2 col-lg-2"><a href="" ng-click="loadDetails(mydata.id)"><button style="background: white;border: grey;border-style: solid;" class="btn col-xs-2 col-md-3 col-lg-3" type="button"><span style="color: black;" class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span></button></a></td>
+    </tr>   
+    </table> 
+    <ul class="pager">
+      <li><a ng-show="pagingData.previous" href="" ng-click="prevPage(pagingData.previous)"> Previous</a></li>
+      <li><a ng-show="pagingData.next" href="" ng-click="nextPage(pagingData.next)">Next</a></li>
+    </ul>
+    </div>
+    </div>
+   
+    
+<div class="animate-slide right" ng-hide=albumSlide>
+  <div id="details"  ng-show=page2>
+        <div id="navBar" class="visible-xs"> 
+    <nav class="col-xs-12 col-md-12 col-lg-12 center-block" style=" border-bottom: #3b5998;border-bottom-style: solid;border-bottom-width: 0.2em;">
+    <ul class="nav  nav-justified">
+     <li id="user" ng-class ="{active: isActive('user')}" class=" col-xs-12 col-md-2 col-lg-2 "><a href="" ng-Click="loadData(query,'user')">Users</a></li>
+     <li id="page" ng-class ="{active: isActive('page')}" class=" col-xs-12 col-md-2 col-lg-2"><a href="" ng-Click="loadData(query,'page')">Pages</a></li>
+     <li id="event" ng-class ="{active: isActive('event')}"  class=" col-xs-12 col-md-2 col-lg-2"><a href="" ng-Click="loadData(query,'event')">Events</a></li>
+     <li id="place" ng-class ="{active: isActive('place')}" class=" col-xs-12 col-md-2 col-lg-2"><a href="" ng-Click="loadData(query,'place')">Places</a></li>
+     <li id="group"ng-class ="{active: isActive('group')}"  class=" col-xs-12 col-md-2 col-lg-2"><a href="" ng-Click="loadData(query,'group')">Groups</a></li>
+     <li id="fab" ng-class ="{active: isActive('favourites')}"  class=" col-xs-12 col-md-2 col-lg-2"><a href="" ng-Click="loadFavData(query,'favourites')">Favourites</a></li>
+    </ul>
+    </nav>
+        
+        
+    </div>
+     
+        <div class="col-lg-12" >
+          <br>
+            <div class="col-xs-3 col-md-4 col-lg-6">
+             <button type="button"  ng-click="goBack()" class="btn btn-sm " aria-label="Left Align">
+             <span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span> Back
+             </button>
+            </div>
+            
+            <div class="col-lg-6">
+            
+            <p class="col-xs-5 col-md-6 col-lg-8"></p>
+            <button href=""  ng-show=favIcon  id="page2bookMarkButton" ng-click="removeFromBookMark(mydata);favIcon=!favIcon;"  class="btn col-xs-1 col-md-1 col-lg-1 " type="button"> <span class="glyphicon glyphicon-star" style="color:yellow;"></span> </button>
+        
+             <button href=""  ng-hide=favIcon  id="notBookMarkButton" ng-click="saveToBookMark(mydata);favIcon=!favIcon; "  class="btn col-xs-1 col-md-1 col-lg-1 " type="button"> <span style="color:black;"class="glyphicon glyphicon-star-empty"></span> </button>
+                <a href="" class=" pull-right" ng-click="postToFb()"><img src="http://cs-server.usc.edu:45678/hw/hw8/images/facebook.png" style="height: 2.5em;width: 2.5em;">   </a>
+            
+            </div>
+        </div>
+      <br>
+        
+      <div class = "col-sm-6" id="showAlbums">
+            <div class = "panel panel-default" >
+              <div class = "panel-heading">Albums</div>
+              <br>
+            
+              <div class = "panel-body">
+                <div ng-show=noAlbum class = "panel-body panel panel-warning">No data found</div>
+                <div class="conatiner" ng-show=albumPostLoading>
+                <br><br>
+                <div class="progress"  >
+                    <div class="progress-bar progress-bar-striped progress-bar-animated active" role="progressbar" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100" style="width: 50%">
+                    </div>
+                </div>
+                </div>
+                <div ng-hide=noAlbum class = "panel-group" id = "accordion">
+                       <div class = "panel panel-default" ng-repeat="data in page2Data.slice(0,1)">
+                    <div class = "panel-heading" ><a data-toggle="collapse" href = "#{{data.id}}" data-parent = "#accordion" >{{data.name}}</a></div>
+                    <div id = "{{data.id}}" class="collapse in">
+                      <div ng-hide=noAlbum class = "panel-body" ng-repeat = "photoData in data.photos.data" ><img ng-src="https://graph.facebook.com/v2.8/{{photoData.id}}/picture?type(large)&access_token=EAAKpV72d3DkBAD4ZCfVmW03RR3nUzk6pZCNumAEhZAZBpws6N7Q6KtIc9WgZBtYNb8a8bevVsLWMtrwNouoSCzaqyKedLvewL3Mz43ZBZBu3gpqoZBYIkpsNOD1pDh7DTfZCIuuKn92r86xQaN8tacHVqJyAZAa4ThJTkZD" class="img-responsive img-rounded"></div>
+                    </div>
+                  </div>
+
+                  <div class = "panel panel-default" ng-repeat = "data in page2Data.slice(1,page2Data.lenght)">
+                    <div class = "panel-heading" ><a data-toggle="collapse" href = "#{{data.id}}" data-parent = "#accordion" >{{data.name}}</a></div>
+                    <div id = "{{data.id}}" class="collapse">
+                      <div ng-hide=noAlbum class = "panel-body" ng-repeat = "photoData in data.photos.data" ><img ng-src="https://graph.facebook.com/v2.8/{{photoData.id}}/picture?type(large)&access_token=EAAKpV72d3DkBAD4ZCfVmW03RR3nUzk6pZCNumAEhZAZBpws6N7Q6KtIc9WgZBtYNb8a8bevVsLWMtrwNouoSCzaqyKedLvewL3Mz43ZBZBu3gpqoZBYIkpsNOD1pDh7DTfZCIuuKn92r86xQaN8tacHVqJyAZAa4ThJTkZD" class="img-responsive img-rounded"></div>
+                    </div>
+                  </div>
+                </div>
+                
+              </div>
+            </div>
+          </div>
+      
+      
+       <div class = "col-sm-6" id="showPosts">
+            <div class = "panel panel-default" >
+              <div class = "panel-heading">Posts</div>
+              <br>
+              <div class = "panel-body">
+                <div ng-show=noPost class = "panel-body panel panel-warning">No data found</div>
+                <div class="conatiner" ng-show=albumPostLoading>
+                <br><br>
+                <div class="progress"  >
+                    <div class="progress-bar progress-bar-striped progress-bar-animated active" role="progressbar" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100" style="width: 50%">
+                    </div>
+                </div>
+                </div>
+                <div ng-hide=noPost class = "panel-group" id = "accordion">
+                  <div class = "panel panel-default" ng-repeat="data in postData">
+                    <div class = "panel-heading" ><a data-toggle="collapse" href = "#{{data.id}}" data-parent = "#accordion" >{{data.name}}</a></div>
+                    <div id = "{{data.id}}" class="collapse in">
+                      <div class = "panel-body" >
+                          <img ng-hide=noPost height="40em" width="40em" ng-src="{{posterUrl}}" alt="Image Missing"/>
+                            <p style="font-weight: 800; display:inline;">&nbsp;&nbsp;{{posterName}}</p>
+                            <p style=" color:grey;   margin-left: 3em;margin-top: -1em;">&nbsp;&nbsp;{{data.created_time}}</p>
+                            <p >{{data.message}} </p>
+                     </div>
+                    </div>
+                  </div>
+                </div>
+                
+              </div>
+            </div>
+          </div>
+      
+    </div>
+</div>
+        </div>
+      
+<!--        <div class="border col-lg-6 list-group">-->
+<!--
+            <div class="list-group-item"><a href="#" class="list-group-item disabled">Albums</a>
+            <div class="conatiner" ng-show=albumPostLoading>
+                <br><br>
+                <div class="progress col-xs-1 col-md-3 col-lg-12"  >
+                    <div class="progress-bar progress-bar-striped progress-bar-animated active" role="progressbar" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100" style="width: 50%">
+                    </div>
+                </div>
+            </div>
+-->
+<!--
+            <div ng-show=noAlbum>
+                    <br><br>
+                    
+                    <a style="    background: beige;"class="list-group-item disabled" href=""  class=" col-xs-1 col-md-3 col-lg-1">No data found</a>
+                    <br><br>
+            </div>
+-->
+<!--
+            <div ng-hide=noAlbum>
+            <ul ng-repeat="data in page2Data"  style="padding-left:0em;">
+            
+            <a  href="" class="list-group-item" ng-click="toggleAlbum(data.name)">{{data.name}} </a>
+
+               <div style="display:none;" id="{{data.name}}">
+                <ul style="padding-left:0em;" ng-repeat="photoData in data.photos.data"> 
+                
+                     <a href=""><img class="img-responsive list-group-item " ng-src="https://graph.facebook.com/v2.8/{{photoData.id}}/picture?type(large)&access_token=EAARhD5xqBMUBAFS6o408tfZBV0ZBgVu5BzzLB6alXRs9UxtGd3XH8LN5sKgkFRYn1cC7weLpZCBB3ph5mdJThP585VPwpBzT6tZAXTVd9yh1nLp0w9pZACJsQvblQdNawUEXA7AAHF0YFpXvp5BBP" alt="Image missing" style=""></img></a>
+                </ul>
+                </div>
+            </ul>
+        </div>
+-->
+      
+<!--
+        <div class=" list-group">
+        <div class="border col-lg-6 list-group">
+            <a href="#" class="list-group-item disabled">Post</a>
+            <div class="conatiner" ng-show=albumPostLoading>
+                <br><br>
+                <div class="progress col-xs-1 col-md-3 col-lg-12"  >
+                    <div class="progress-bar progress-bar-striped progress-bar-animated active" role="progressbar" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100" style="width: 50%">
+                    </div>
+                </div>
+            </div>
+             <div ng-show=noPost>
+                    <br><br>
+                    
+                    <a style="    background: beige;"class="list-group-item disabled" href=""  class=" col-xs-1 col-md-3 col-lg-1">No data found</a>
+                    <br><br>
+            </div>
+            <div ng-hide=noPost>
+            <ul class="list-group-item" ng-repeat="data in postData">
+            <img height="40em" width="40em" ng-src="{{posterUrl}}" alt="Image Missing"/>
+            <p style="font-weight: 800; display:inline;">&nbsp;&nbsp;{{posterName}}</p>
+            <p style=" color:grey;   margin-left: 3em;margin-top: -1em;">&nbsp;&nbsp;{{data.created_time}}</p>
+            <p >{{data.message}} </p>    
+            </ul>
+            </div>
+        </div>
+    </div>
+-->
+
+
+
+</body>
+
+</html>
